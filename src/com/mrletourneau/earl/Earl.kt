@@ -26,7 +26,7 @@ fun sslSocketServerFactory(): SSLServerSocketFactory {
     val ssf: SSLServerSocketFactory
 
     // set up key manager to do server authentication
-    val passPhrase = "henrimarcelannabellamarie".toCharArray()
+    val passPhrase = getPassPhrase()
 
     val ctx = SSLContext.getInstance("TLS")
     val kmf = KeyManagerFactory.getInstance("SunX509")
@@ -40,3 +40,5 @@ fun sslSocketServerFactory(): SSLServerSocketFactory {
 
     return ssf
 }
+
+private fun getPassPhrase() = System.getenv("EARL_CERT_PASS_PHRASE").toCharArray()
