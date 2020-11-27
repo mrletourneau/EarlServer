@@ -8,11 +8,14 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocketFactory
 
+val EARL_DOCUMENT_ROOT = System.getenv("EARL_DOCUMENT_ROOT") ?: "./"
+val EARL_PORT = (System.getenv("EARL_DOCUMENT_ROOT") ?: "1965").toInt()
+
 fun main() {
     println("Hello (from) Earl!")
     try {
         val ssf: ServerSocketFactory = sslSocketServerFactory()
-        val ss = ssf.createServerSocket(1965)
+        val ss = ssf.createServerSocket(EARL_PORT)
         EarlServer(ss)
     } catch (e: IOException) {
         println(

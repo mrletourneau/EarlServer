@@ -1,19 +1,12 @@
 package com.mrletourneau.earl
 
 import java.io.*
+import java.io.File
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.URI
 
 
-/*
- * ClassServer.java -- a simple file server that can serve
- * Http get request in both clear and secure channel
- */
-
-/*
- * ClassServer.java -- a simple file server that can serve
- * Http get request in both clear and secure channel
- */
 class EarlServer constructor(ss: ServerSocket?) : Runnable {
     private var server: ServerSocket? = null
 
@@ -46,11 +39,15 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
                 )
             )
             try {
-                // retrieve bytecodes
-                val bytes = "Hello Mackenize!!".toByteArray()
+                val `in` = BufferedReader(
+                    InputStreamReader(socket.getInputStream())
+                )
+                val path = getPath(`in`)
+                val bytes = getBytes(path!!)
+
                 try {
                     // Success header
-                    out.print("20 text/plain\r\n")
+                    out.print("20 text/gemini; lang=en\r\n")
                     out.flush()
                     rawOut.write(bytes)
                     rawOut.flush()
@@ -76,6 +73,44 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
         }
     }
 
+    @Throws(IOException::class)
+    private fun getPath(`in`: BufferedReader): String? {
+        val uri = URI(`in`.readLine())
+        var path = uri.rawPath
+
+        if (path == "/") path = "/index.gmi"
+
+        return if (path.isNotEmpty()) {
+            path
+        } else {
+            throw IOException("Malformed Header")
+        }
+    }
+
+    /**
+     * Returns an array of bytes containing the bytes for
+     * the file represented by the argument **path**.
+     *
+     * @return the bytes for the file
+     * @exception FileNotFoundException if the file corresponding
+     * to **path** could not be loaded.
+     */
+    @Throws(IOException::class)
+    fun getBytes(path: String): ByteArray? {
+        println("reading: $path")
+        val f = File(EARL_DOCUMENT_ROOT + File.separator + path)
+        val length: Int = f.length().toInt()
+        return if (length == 0) {
+            throw IOException("File length is zero: $path")
+        } else {
+            val fin = FileInputStream(f)
+            val `in` = DataInputStream(fin)
+            val bytecodes = ByteArray(length)
+            `in`.readFully(bytecodes)
+            bytecodes
+        }
+    }
+
     /**
      * Create a new thread to listen.
      */
@@ -83,11 +118,6 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
         Thread(this).start()
     }
 
-    /**
-     * Constructs a ClassServer based on **ss** and
-     * obtains a file's bytecodes using the method **getBytes**.
-     *
-     */
     init {
         server = ss
         newListener()
