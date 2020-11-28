@@ -9,7 +9,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocketFactory
 
 val EARL_DOCUMENT_ROOT = System.getenv("EARL_DOCUMENT_ROOT") ?: "./"
-val EARL_PORT = (System.getenv("EARL_DOCUMENT_ROOT") ?: "1965").toInt()
+val EARL_PORT = 1965
 
 fun main() {
     println("Hello (from) Earl!")
