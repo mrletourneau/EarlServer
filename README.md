@@ -3,7 +3,7 @@
 A simple Gemini server written in Kotlin. Currently in extreme alpha.
 
 ## Generating a certificate
-In the `resources` folder in the root of this project, run the following command:
+To generate the key, run the following command (requires keytool):
 ```
 keytool -genkey -alias <alias> -keyalg RSA -keypass <key passphrase> -storepass <store passphrase> -keystore keystore.jks
 ```
