@@ -14,7 +14,7 @@ When prompted for "First and Last Name", enter your hostname.
 1. Copy `earl_config_sample` to desired directory. By default, Earl will search `~/.earl_config`
 2. From the project root directory, run `./gradlew run`. If you chose to put your config in a different directory, you can specify that directory by running `./gradlew run --args='/path/to/.earl_config'`
 
-## 2. Building
+## Building the server
 
 Simply run `./gradlew build`. The resultant distributable will be located in `/Users/letoura/Dropbox/dev/EarlServer/app/build/distributions`. To start Earl, simply run `bin/app`.
 
