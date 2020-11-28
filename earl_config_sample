@@ -1,0 +1,4 @@
+CERT_PASS_PHRASE=<passphrase for your keystore>
+DOCUMENT_ROOT=/path/to/document/root
+KEY_STORE_LOCATION=/path/to/keystore
+PORT=1965

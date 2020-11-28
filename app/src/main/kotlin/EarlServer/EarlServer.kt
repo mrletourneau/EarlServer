@@ -1,4 +1,4 @@
-package com.mrletourneau.earl
+package EarlServer
 
 import java.io.*
 import java.io.File
@@ -98,7 +98,7 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
     @Throws(IOException::class)
     fun getBytes(path: String): ByteArray? {
         println("reading: $path")
-        val f = File(EARL_DOCUMENT_ROOT + File.separator + path)
+        val f = File(Config.EARL_DOCUMENT_ROOT + File.separator + path)
         val length: Int = f.length().toInt()
         return if (length == 0) {
             throw IOException("File length is zero: $path")
