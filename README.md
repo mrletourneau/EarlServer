@@ -16,7 +16,7 @@ When prompted for "First and Last Name", enter your hostname.
 
 ## Building the server
 
-Simply run `./gradlew build`. The resultant distributable will be located in `/Users/letoura/Dropbox/dev/EarlServer/app/build/distributions`. To start Earl, simply run `bin/app`.
+Simply run `./gradlew build`. The resultant distributable will be located in `app/build/distributions`. To start Earl, simply run `bin/app`.
 
 ## Links for learnin'
 
