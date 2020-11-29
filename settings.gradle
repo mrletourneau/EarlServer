@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'EarlServer'
-include('app')
+include('earl')
