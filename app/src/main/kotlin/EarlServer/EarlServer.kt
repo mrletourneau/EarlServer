@@ -10,6 +10,12 @@ import java.net.URI
 class EarlServer constructor(ss: ServerSocket?) : Runnable {
     private var server: ServerSocket? = null
 
+    data class Transaction(
+        var ip: String?,
+        var request: String?,
+        var response: String
+    )
+
     /**
      * The "listen" thread that accepts a connection to the
      * server, parses the header to obtain the file name
@@ -26,10 +32,10 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
             e.printStackTrace()
             return
         }
+        val transaction = Transaction(ip = socket.inetAddress.hostAddress, response = "", request = null)
         // create a new thread to accept the next connection
         newListener()
         try {
-            println("${socket.inetAddress.hostAddress} connected")
             val rawOut = socket.getOutputStream()
             val out = PrintWriter(
                 BufferedWriter(
@@ -43,11 +49,15 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
                     InputStreamReader(socket.getInputStream())
                 )
                 val path = getPath(`in`)
-                val bytes = getBytes(path!!)
 
+                transaction.request = path
+
+                val bytes = getBytes(path!!)
                 try {
+                    val response = "20 text/gemini; lang=en\r\n"
+                    transaction.response = response
                     // Success header
-                    out.print("20 text/gemini; lang=en\r\n")
+                    out.print(response)
                     out.flush()
                     rawOut.write(bytes)
                     rawOut.flush()
@@ -56,11 +66,14 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
                     return
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                // e.printStackTrace()
                 // write out error response
-                out.println("40 " + e.message + "\r\n")
+                val response = "40 " + e.message + "\r\n"
+                transaction.response = response
+                out.println(response)
                 out.flush()
             }
+            logTransaction(transaction)
         } catch (ex: IOException) { // eat exception (could log error to log file, but
 // write out to stdout for now).
             println("error writing response: " + ex.message)
@@ -71,6 +84,10 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
             } catch (e: IOException) {
             }
         }
+    }
+
+    private fun logTransaction(transaction: Transaction) {
+        println("${transaction.ip}\t\t${transaction.request}\t\t${transaction.response.trim()}")
     }
 
     @Throws(IOException::class)
@@ -97,11 +114,10 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
      */
     @Throws(IOException::class)
     fun getBytes(path: String): ByteArray? {
-        println("reading: $path")
         val f = File(Config.EARL_DOCUMENT_ROOT + File.separator + path)
         val length: Int = f.length().toInt()
         return if (length == 0) {
-            throw IOException("File length is zero: $path")
+            throw IOException("File not found")
         } else {
             val fin = FileInputStream(f)
             val `in` = DataInputStream(fin)

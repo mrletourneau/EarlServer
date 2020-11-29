@@ -10,7 +10,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLServerSocketFactory
 
 fun main(args: Array<String>) {
-    println("Hello (from) Earl!")
+    println("Hello (from) Earl!\n")
 
     println("Loading config...")
 
@@ -19,8 +19,8 @@ fun main(args: Array<String>) {
     else
         loadConfig()
 
-    println("Config loaded!")
-    println("Serving on port ${Config.EARL_PORT}...")
+    println("Config loaded!\n")
+    println("Serving on port ${Config.EARL_PORT}...\n\n")
 
     try {
         val ssf: ServerSocketFactory = sslSocketServerFactory()
