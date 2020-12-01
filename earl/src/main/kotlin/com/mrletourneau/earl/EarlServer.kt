@@ -8,7 +8,7 @@ import java.net.URI
 import java.nio.file.Files
 
 
-class EarlServer constructor(ss: ServerSocket?) : Runnable {
+class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
     private var server: ServerSocket? = null
 
     data class Transaction(
@@ -153,6 +153,6 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
     }
 
     init {
-        server = ss
+        server = serverSocket
     }
 }
