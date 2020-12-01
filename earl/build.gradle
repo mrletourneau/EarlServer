@@ -34,9 +34,12 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+
+    // Use Mockk for test mocks
+    testImplementation 'io.mockk:mockk:1.10.3'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'EarlServer.EarlKt'
+    mainClass = 'com.mrletourneau.earl.EarlKt'
 }

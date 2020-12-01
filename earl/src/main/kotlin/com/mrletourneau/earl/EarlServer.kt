@@ -1,10 +1,11 @@
-package EarlServer
+package com.mrletourneau.earl
 
 import java.io.*
 import java.io.File
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.URI
+import java.nio.file.Files
 
 
 class EarlServer constructor(ss: ServerSocket?) : Runnable {
@@ -15,6 +16,8 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
         var request: String?,
         var response: String
     )
+
+    data class FileData(val bytes: ByteArray, val mimeType: String)
 
     /**
      * The "listen" thread that accepts a connection to the
@@ -52,14 +55,15 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
 
                 transaction.request = path
 
-                val bytes = getBytes(path!!)
+                val fileData = getFile(path!!)
+
                 try {
-                    val response = "20 text/gemini; lang=en\r\n"
+                    val response = "20 ${fileData.mimeType}; lang=en\r\n"
                     transaction.response = response
                     // Success header
                     out.print(response)
                     out.flush()
-                    rawOut.write(bytes)
+                    rawOut.write(fileData.bytes)
                     rawOut.flush()
                 } catch (ie: IOException) {
                     ie.printStackTrace()
@@ -113,7 +117,7 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
      * to **path** could not be loaded.
      */
     @Throws(IOException::class)
-    fun getBytes(path: String): ByteArray? {
+    fun getFile(path: String): FileData {
         val f = File(Config.EARL_DOCUMENT_ROOT + File.separator + path)
         val length: Int = f.length().toInt()
         return if (length == 0) {
@@ -121,21 +125,34 @@ class EarlServer constructor(ss: ServerSocket?) : Runnable {
         } else {
             val fin = FileInputStream(f)
             val `in` = DataInputStream(fin)
-            val bytecodes = ByteArray(length)
-            `in`.readFully(bytecodes)
-            bytecodes
+            val bytes = ByteArray(length)
+            `in`.readFully(bytes)
+
+            return FileData(bytes, getMimeType(f))
+        }
+    }
+
+    private fun isGeminiFile(fileName: String) = fileName.endsWith(".gmi") || fileName.endsWith(".gemini")
+
+    fun getMimeType(file: File): String {
+        val path = file.toPath()
+
+        if (isGeminiFile(file.name)) return "text/gemini"
+
+        return when (val mimeType = Files.probeContentType(path)) {
+            null -> "text/plain"
+            else -> mimeType
         }
     }
 
     /**
      * Create a new thread to listen.
      */
-    private fun newListener() {
+    fun newListener() {
         Thread(this).start()
     }
 
     init {
         server = ss
-        newListener()
     }
 }

@@ -1,6 +1,6 @@
-package EarlServer
+package com.mrletourneau.earl
 
-import EarlServer.Config.loadConfig
+import com.mrletourneau.earl.Config.loadConfig
 import java.io.FileInputStream
 import java.io.IOException
 import java.security.KeyStore
@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
         val ssf: ServerSocketFactory = sslSocketServerFactory()
         val ss = ssf.createServerSocket(Config.EARL_PORT)
 
-        EarlServer(ss)
+        EarlServer(ss).newListener()
     } catch (e: IOException) {
         println(
             "Unable to start Earl: " +

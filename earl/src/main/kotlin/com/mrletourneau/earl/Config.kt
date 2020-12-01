@@ -1,4 +1,4 @@
-package EarlServer
+package com.mrletourneau.earl
 
 import java.io.FileInputStream
 import java.util.*
