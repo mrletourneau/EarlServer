@@ -6,6 +6,9 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.net.URI
 import java.nio.file.Files
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
 
 
 class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
@@ -90,8 +93,12 @@ class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
         }
     }
 
+    fun now():String {
+        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").format(Date.from(Instant.now()))
+    }
+
     private fun logTransaction(transaction: Transaction) {
-        println("${transaction.ip}\t\t${transaction.request}\t\t${transaction.response.trim()}")
+        println("${now()}\t\t${transaction.ip}\t\t${transaction.request}\t\t${transaction.response.trim()}")
     }
 
     @Throws(IOException::class)
