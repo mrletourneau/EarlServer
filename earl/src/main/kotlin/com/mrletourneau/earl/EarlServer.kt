@@ -1,11 +1,11 @@
 package com.mrletourneau.earl
 
+import org.apache.tika.Tika
 import java.io.*
 import java.io.File
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.URI
-import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
@@ -127,7 +127,7 @@ class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
             return path
         }
         catch(e: Exception) {
-            e.printStackTrace()
+            println("INFO - ${e.message}")
             throw IOException("Malformed Header")
         }
     }
@@ -159,11 +159,9 @@ class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
     private fun isGeminiFile(fileName: String) = fileName.endsWith(".gmi") || fileName.endsWith(".gemini")
 
     fun getMimeType(file: File): String {
-        val path = file.toPath()
-
         if (isGeminiFile(file.name)) return "text/gemini"
 
-        return when (val mimeType = Files.probeContentType(path)) {
+        return when (val mimeType = Tika().detect(file)) {
             null -> "text/plain"
             else -> mimeType
         }

@@ -4,7 +4,6 @@ import junit.framework.Assert.assertEquals
 import org.junit.Test
 import java.io.*
 import java.net.ServerSocket
-import java.nio.file.Paths
 import kotlin.test.assertFailsWith
 
 internal class EarlServerTest {
@@ -41,6 +40,10 @@ internal class EarlServerTest {
         }
 
         assertFailsWith<IOException> {
+            getPathTestHelper("http://test")
+        }
+
+        assertFailsWith<IOException> {
             getPathTestHelper("af3*#Hfjd1::fdf3")
         }
     }
@@ -63,6 +66,6 @@ internal class EarlServerTest {
     }
 
     private fun getPath(fileName: String): String {
-        return "${Paths.get("").toAbsolutePath()}/earl/src/test/resources/${fileName}"
+        return "src/test/resources/${fileName}"
     }
 }
