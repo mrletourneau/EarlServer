@@ -1,6 +1,6 @@
 # Earl Gemini Server
 
-A simple Gemini server written in Kotlin. Currently in extreme alpha.
+A simple Gemini server written in Kotlin. Currently in alpha.
 
 ## Generating a certificate
 To generate the key, run the following command (requires keytool):
