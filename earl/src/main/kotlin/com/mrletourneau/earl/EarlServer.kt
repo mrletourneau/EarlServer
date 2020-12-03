@@ -58,7 +58,7 @@ class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
 
                 transaction.request = path
 
-                val fileData = getFile(path!!)
+                val fileData = getFile(path)
 
                 try {
                     val response = "20 ${fileData.mimeType}; lang=en\r\n"
@@ -102,15 +102,32 @@ class EarlServer constructor(serverSocket: ServerSocket?) : Runnable {
     }
 
     @Throws(IOException::class)
-    private fun getPath(`in`: BufferedReader): String? {
-        val uri = URI(`in`.readLine())
-        var path = uri.rawPath
+    fun getPath(`in`: BufferedReader): String {
+        try {
+            val rawUri = `in`.readLine()
 
-        if (path == "/") path = "/index.gmi"
+            if (rawUri.isNullOrEmpty()) {
+                throw IOException("Invalid URI, empty request")
+            }
 
-        return if (path.isNotEmpty()) {
-            path
-        } else {
+            val uri = URI(rawUri)
+
+            if (uri.scheme == null) {
+                throw IOException("Missing scheme (no \"gemini://\" URI component found)")
+            }
+
+            if (!uri.scheme.equals("gemini", ignoreCase = true)) {
+                throw IOException("Invalid scheme. Authority must match \"gemini\". Found \"${uri.scheme}\"")
+            }
+
+            var path = uri.rawPath
+
+            if (path == "/" || path.isEmpty()) path = "/index.gmi"
+
+            return path
+        }
+        catch(e: Exception) {
+            e.printStackTrace()
             throw IOException("Malformed Header")
         }
     }

@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         loadConfig()
 
     println("Config loaded!\n")
-    println("Serving on port ${Config.EARL_PORT}...\n\n")
+    println("Serving from ${Config.EARL_DOCUMENT_ROOT} on port ${Config.EARL_PORT}...\n\n")
 
     try {
         val ssf: ServerSocketFactory = sslSocketServerFactory()
